@@ -1,0 +1,622 @@
+{
+  "data_asset_type": null,
+  "expectation_suite_name": "housing_expectation_suite",
+  "expectations": [
+    {
+      "expectation_type": "expect_table_columns_to_match_ordered_list",
+      "kwargs": {
+        "column_list": [
+          "price",
+          "yr_built",
+          "bedrooms",
+          "postcode",
+          "area",
+          "date",
+          "bathrooms",
+          "condition",
+          "grade",
+          "floors",
+          "sqft_living",
+          "sqft_lot",
+          "sqft_basement",
+          "sqft_living15",
+          "sqft_lot15",
+          "waterfront",
+          "view",
+          "distance",
+          "similarity_scores"
+        ]
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_not_be_null",
+      "kwargs": {
+        "column": "price"
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_between",
+      "kwargs": {
+        "auto": true,
+        "column": "yr_built",
+        "max_value": 2015,
+        "min_value": 1900,
+        "mostly": 1.0,
+        "strict_max": false,
+        "strict_min": false
+      },
+      "meta": {
+        "profiler_config": {
+          "class_name": "BaseRuleBasedProfiler",
+          "config_version": 1.0,
+          "module_name": "great_expectations.rule_based_profiler.rule_based_profiler",
+          "name": "expect_column_values_to_be_between",
+          "rules": [
+            {
+              "domain_builder": {
+                "class_name": "ColumnDomainBuilder",
+                "exclude_column_name_suffixes": null,
+                "exclude_column_names": null,
+                "exclude_semantic_types": null,
+                "include_column_name_suffixes": null,
+                "include_column_names": [
+                  "yr_built"
+                ],
+                "include_semantic_types": null,
+                "module_name": "great_expectations.rule_based_profiler.domain_builder.column_domain_builder",
+                "semantic_type_filter_class_name": null,
+                "semantic_type_filter_module_name": null
+              },
+              "expectation_configuration_builders": [
+                {
+                  "class_name": "DefaultExpectationConfigurationBuilder",
+                  "column": "$domain.domain_kwargs.column",
+                  "condition": null,
+                  "expectation_type": "expect_column_values_to_be_between",
+                  "max_value": "$parameter.column_max_range_estimator.value[1]",
+                  "meta": {
+                    "profiler_details": {
+                      "column_max_range_estimator": "$parameter.column_max_range_estimator.details",
+                      "column_min_range_estimator": "$parameter.column_min_range_estimator.details"
+                    }
+                  },
+                  "min_value": "$parameter.column_min_range_estimator.value[0]",
+                  "module_name": "great_expectations.rule_based_profiler.expectation_configuration_builder.default_expectation_configuration_builder",
+                  "mostly": "$variables.mostly",
+                  "strict_max": "$variables.strict_max",
+                  "strict_min": "$variables.strict_min",
+                  "validation_parameter_builder_configs": [
+                    {
+                      "class_name": "NumericMetricRangeMultiBatchParameterBuilder",
+                      "enforce_numeric_metric": true,
+                      "estimator": "$variables.estimator",
+                      "evaluation_parameter_builder_configs": null,
+                      "false_positive_rate": "$variables.false_positive_rate",
+                      "include_estimator_samples_histogram_in_details": "$variables.include_estimator_samples_histogram_in_details",
+                      "metric_domain_kwargs": "$domain.domain_kwargs",
+                      "metric_multi_batch_parameter_builder_name": null,
+                      "metric_name": "column.min",
+                      "metric_value_kwargs": null,
+                      "module_name": "great_expectations.rule_based_profiler.parameter_builder",
+                      "n_resamples": "$variables.n_resamples",
+                      "name": "column_min_range_estimator",
+                      "quantile_bias_correction": "$variables.quantile_bias_correction",
+                      "quantile_bias_std_error_ratio_threshold": "$variables.quantile_bias_std_error_ratio_threshold",
+                      "quantile_statistic_interpolation_method": "$variables.quantile_statistic_interpolation_method",
+                      "random_seed": "$variables.random_seed",
+                      "reduce_scalar_metric": true,
+                      "replace_nan_with_zero": true,
+                      "round_decimals": "$variables.round_decimals",
+                      "truncate_values": "$variables.truncate_values"
+                    },
+                    {
+                      "class_name": "NumericMetricRangeMultiBatchParameterBuilder",
+                      "enforce_numeric_metric": true,
+                      "estimator": "$variables.estimator",
+                      "evaluation_parameter_builder_configs": null,
+                      "false_positive_rate": "$variables.false_positive_rate",
+                      "include_estimator_samples_histogram_in_details": "$variables.include_estimator_samples_histogram_in_details",
+                      "metric_domain_kwargs": "$domain.domain_kwargs",
+                      "metric_multi_batch_parameter_builder_name": null,
+                      "metric_name": "column.max",
+                      "metric_value_kwargs": null,
+                      "module_name": "great_expectations.rule_based_profiler.parameter_builder",
+                      "n_resamples": "$variables.n_resamples",
+                      "name": "column_max_range_estimator",
+                      "quantile_bias_correction": "$variables.quantile_bias_correction",
+                      "quantile_bias_std_error_ratio_threshold": "$variables.quantile_bias_std_error_ratio_threshold",
+                      "quantile_statistic_interpolation_method": "$variables.quantile_statistic_interpolation_method",
+                      "random_seed": "$variables.random_seed",
+                      "reduce_scalar_metric": true,
+                      "replace_nan_with_zero": true,
+                      "round_decimals": "$variables.round_decimals",
+                      "truncate_values": "$variables.truncate_values"
+                    }
+                  ]
+                }
+              ],
+              "parameter_builders": [],
+              "variables": {
+                "estimator": "exact",
+                "include_estimator_samples_histogram_in_details": false,
+                "mostly": 1.0,
+                "round_decimals": null,
+                "strict_max": false,
+                "strict_min": false,
+                "truncate_values": {
+                  "lower_bound": null,
+                  "upper_bound": null
+                }
+              }
+            }
+          ],
+          "variables": {}
+        }
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_of_type",
+      "kwargs": {
+        "column": "bedrooms",
+        "type_": "int64"
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_in_set",
+      "kwargs": {
+        "column": "condition",
+        "value_set": [
+          "satisfactory",
+          "good",
+          "excellent",
+          "tolerable",
+          "poor"
+        ]
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_between",
+      "kwargs": {
+        "auto": true,
+        "column": "bedrooms",
+        "max_value": 5,
+        "min_value": 0,
+        "mostly": 1.0,
+        "strict_max": false,
+        "strict_min": false
+      },
+      "meta": {
+        "profiler_config": {
+          "class_name": "BaseRuleBasedProfiler",
+          "config_version": 1.0,
+          "module_name": "great_expectations.rule_based_profiler.rule_based_profiler",
+          "name": "expect_column_values_to_be_between",
+          "rules": [
+            {
+              "domain_builder": {
+                "class_name": "ColumnDomainBuilder",
+                "exclude_column_name_suffixes": null,
+                "exclude_column_names": null,
+                "exclude_semantic_types": null,
+                "include_column_name_suffixes": null,
+                "include_column_names": [
+                  "bedrooms"
+                ],
+                "include_semantic_types": null,
+                "module_name": "great_expectations.rule_based_profiler.domain_builder.column_domain_builder",
+                "semantic_type_filter_class_name": null,
+                "semantic_type_filter_module_name": null
+              },
+              "expectation_configuration_builders": [
+                {
+                  "class_name": "DefaultExpectationConfigurationBuilder",
+                  "column": "$domain.domain_kwargs.column",
+                  "condition": null,
+                  "expectation_type": "expect_column_values_to_be_between",
+                  "max_value": "$parameter.column_max_range_estimator.value[1]",
+                  "meta": {
+                    "profiler_details": {
+                      "column_max_range_estimator": "$parameter.column_max_range_estimator.details",
+                      "column_min_range_estimator": "$parameter.column_min_range_estimator.details"
+                    }
+                  },
+                  "min_value": "$parameter.column_min_range_estimator.value[0]",
+                  "module_name": "great_expectations.rule_based_profiler.expectation_configuration_builder.default_expectation_configuration_builder",
+                  "mostly": "$variables.mostly",
+                  "strict_max": "$variables.strict_max",
+                  "strict_min": "$variables.strict_min",
+                  "validation_parameter_builder_configs": [
+                    {
+                      "class_name": "NumericMetricRangeMultiBatchParameterBuilder",
+                      "enforce_numeric_metric": true,
+                      "estimator": "$variables.estimator",
+                      "evaluation_parameter_builder_configs": null,
+                      "false_positive_rate": "$variables.false_positive_rate",
+                      "include_estimator_samples_histogram_in_details": "$variables.include_estimator_samples_histogram_in_details",
+                      "metric_domain_kwargs": "$domain.domain_kwargs",
+                      "metric_multi_batch_parameter_builder_name": null,
+                      "metric_name": "column.min",
+                      "metric_value_kwargs": null,
+                      "module_name": "great_expectations.rule_based_profiler.parameter_builder",
+                      "n_resamples": "$variables.n_resamples",
+                      "name": "column_min_range_estimator",
+                      "quantile_bias_correction": "$variables.quantile_bias_correction",
+                      "quantile_bias_std_error_ratio_threshold": "$variables.quantile_bias_std_error_ratio_threshold",
+                      "quantile_statistic_interpolation_method": "$variables.quantile_statistic_interpolation_method",
+                      "random_seed": "$variables.random_seed",
+                      "reduce_scalar_metric": true,
+                      "replace_nan_with_zero": true,
+                      "round_decimals": "$variables.round_decimals",
+                      "truncate_values": "$variables.truncate_values"
+                    },
+                    {
+                      "class_name": "NumericMetricRangeMultiBatchParameterBuilder",
+                      "enforce_numeric_metric": true,
+                      "estimator": "$variables.estimator",
+                      "evaluation_parameter_builder_configs": null,
+                      "false_positive_rate": "$variables.false_positive_rate",
+                      "include_estimator_samples_histogram_in_details": "$variables.include_estimator_samples_histogram_in_details",
+                      "metric_domain_kwargs": "$domain.domain_kwargs",
+                      "metric_multi_batch_parameter_builder_name": null,
+                      "metric_name": "column.max",
+                      "metric_value_kwargs": null,
+                      "module_name": "great_expectations.rule_based_profiler.parameter_builder",
+                      "n_resamples": "$variables.n_resamples",
+                      "name": "column_max_range_estimator",
+                      "quantile_bias_correction": "$variables.quantile_bias_correction",
+                      "quantile_bias_std_error_ratio_threshold": "$variables.quantile_bias_std_error_ratio_threshold",
+                      "quantile_statistic_interpolation_method": "$variables.quantile_statistic_interpolation_method",
+                      "random_seed": "$variables.random_seed",
+                      "reduce_scalar_metric": true,
+                      "replace_nan_with_zero": true,
+                      "round_decimals": "$variables.round_decimals",
+                      "truncate_values": "$variables.truncate_values"
+                    }
+                  ]
+                }
+              ],
+              "parameter_builders": [],
+              "variables": {
+                "estimator": "exact",
+                "include_estimator_samples_histogram_in_details": false,
+                "mostly": 1.0,
+                "round_decimals": null,
+                "strict_max": false,
+                "strict_min": false,
+                "truncate_values": {
+                  "lower_bound": null,
+                  "upper_bound": null
+                }
+              }
+            }
+          ],
+          "variables": {}
+        }
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_between",
+      "kwargs": {
+        "auto": true,
+        "column": "date",
+        "max_value": "2015-12-24T00:00:00",
+        "min_value": "2007-07-02T00:00:00",
+        "mostly": 1.0,
+        "strict_max": false,
+        "strict_min": false
+      },
+      "meta": {
+        "profiler_config": {
+          "class_name": "BaseRuleBasedProfiler",
+          "config_version": 1.0,
+          "module_name": "great_expectations.rule_based_profiler.rule_based_profiler",
+          "name": "expect_column_values_to_be_between",
+          "rules": [
+            {
+              "domain_builder": {
+                "class_name": "ColumnDomainBuilder",
+                "exclude_column_name_suffixes": null,
+                "exclude_column_names": null,
+                "exclude_semantic_types": null,
+                "include_column_name_suffixes": null,
+                "include_column_names": [
+                  "date"
+                ],
+                "include_semantic_types": null,
+                "module_name": "great_expectations.rule_based_profiler.domain_builder.column_domain_builder",
+                "semantic_type_filter_class_name": null,
+                "semantic_type_filter_module_name": null
+              },
+              "expectation_configuration_builders": [
+                {
+                  "class_name": "DefaultExpectationConfigurationBuilder",
+                  "column": "$domain.domain_kwargs.column",
+                  "condition": null,
+                  "expectation_type": "expect_column_values_to_be_between",
+                  "max_value": "$parameter.column_max_range_estimator.value[1]",
+                  "meta": {
+                    "profiler_details": {
+                      "column_max_range_estimator": "$parameter.column_max_range_estimator.details",
+                      "column_min_range_estimator": "$parameter.column_min_range_estimator.details"
+                    }
+                  },
+                  "min_value": "$parameter.column_min_range_estimator.value[0]",
+                  "module_name": "great_expectations.rule_based_profiler.expectation_configuration_builder.default_expectation_configuration_builder",
+                  "mostly": "$variables.mostly",
+                  "strict_max": "$variables.strict_max",
+                  "strict_min": "$variables.strict_min",
+                  "validation_parameter_builder_configs": [
+                    {
+                      "class_name": "NumericMetricRangeMultiBatchParameterBuilder",
+                      "enforce_numeric_metric": true,
+                      "estimator": "$variables.estimator",
+                      "evaluation_parameter_builder_configs": null,
+                      "false_positive_rate": "$variables.false_positive_rate",
+                      "include_estimator_samples_histogram_in_details": "$variables.include_estimator_samples_histogram_in_details",
+                      "metric_domain_kwargs": "$domain.domain_kwargs",
+                      "metric_multi_batch_parameter_builder_name": null,
+                      "metric_name": "column.min",
+                      "metric_value_kwargs": null,
+                      "module_name": "great_expectations.rule_based_profiler.parameter_builder",
+                      "n_resamples": "$variables.n_resamples",
+                      "name": "column_min_range_estimator",
+                      "quantile_bias_correction": "$variables.quantile_bias_correction",
+                      "quantile_bias_std_error_ratio_threshold": "$variables.quantile_bias_std_error_ratio_threshold",
+                      "quantile_statistic_interpolation_method": "$variables.quantile_statistic_interpolation_method",
+                      "random_seed": "$variables.random_seed",
+                      "reduce_scalar_metric": true,
+                      "replace_nan_with_zero": true,
+                      "round_decimals": "$variables.round_decimals",
+                      "truncate_values": "$variables.truncate_values"
+                    },
+                    {
+                      "class_name": "NumericMetricRangeMultiBatchParameterBuilder",
+                      "enforce_numeric_metric": true,
+                      "estimator": "$variables.estimator",
+                      "evaluation_parameter_builder_configs": null,
+                      "false_positive_rate": "$variables.false_positive_rate",
+                      "include_estimator_samples_histogram_in_details": "$variables.include_estimator_samples_histogram_in_details",
+                      "metric_domain_kwargs": "$domain.domain_kwargs",
+                      "metric_multi_batch_parameter_builder_name": null,
+                      "metric_name": "column.max",
+                      "metric_value_kwargs": null,
+                      "module_name": "great_expectations.rule_based_profiler.parameter_builder",
+                      "n_resamples": "$variables.n_resamples",
+                      "name": "column_max_range_estimator",
+                      "quantile_bias_correction": "$variables.quantile_bias_correction",
+                      "quantile_bias_std_error_ratio_threshold": "$variables.quantile_bias_std_error_ratio_threshold",
+                      "quantile_statistic_interpolation_method": "$variables.quantile_statistic_interpolation_method",
+                      "random_seed": "$variables.random_seed",
+                      "reduce_scalar_metric": true,
+                      "replace_nan_with_zero": true,
+                      "round_decimals": "$variables.round_decimals",
+                      "truncate_values": "$variables.truncate_values"
+                    }
+                  ]
+                }
+              ],
+              "parameter_builders": [],
+              "variables": {
+                "estimator": "exact",
+                "include_estimator_samples_histogram_in_details": false,
+                "mostly": 1.0,
+                "round_decimals": null,
+                "strict_max": false,
+                "strict_min": false,
+                "truncate_values": {
+                  "lower_bound": null,
+                  "upper_bound": null
+                }
+              }
+            }
+          ],
+          "variables": {}
+        }
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_in_set",
+      "kwargs": {
+        "auto": true,
+        "column": "area",
+        "mostly": 1.0,
+        "value_set": [
+          "Page",
+          "Hall",
+          "Acton",
+          "Uriarra",
+          "Isaacs",
+          "Administrative",
+          "Garran",
+          "Ginninderra Village",
+          "Isabella Plains",
+          "Reid",
+          "Hawker",
+          "Monash",
+          "Capital Hill",
+          "Uriarra Forest",
+          "Deakin",
+          "Russell Hill",
+          "City",
+          "Conder",
+          "Lyneham",
+          "Campbell",
+          "Evatt",
+          "Black Mountain",
+          "Melba",
+          "Mawson",
+          "Belconnen Dc",
+          "Hughes",
+          "Fraser",
+          "Fyshwick",
+          "Narrabundah",
+          "Woden",
+          "Bonython",
+          "O'malley",
+          "Duffy",
+          "Bruce",
+          "Red Hill",
+          "Macquarie",
+          "Farrer",
+          "Kippax Centre",
+          "Causeway",
+          "Parkes",
+          "Fadden",
+          "Phillip",
+          "Canberra",
+          "Ngunnawal",
+          "Belconnen",
+          "Kingston",
+          "Torrens",
+          "Banks",
+          "Turner",
+          "Chifley",
+          "Pierces Creek",
+          "Calwell",
+          "Gowrie",
+          "Weston Creek",
+          "Pialligo",
+          "Higgins",
+          "Hmas Harman",
+          "Parliament House",
+          "Giralang",
+          "Spence",
+          "Kambah",
+          "Weston",
+          "Harman",
+          "Manuka",
+          "Downer",
+          "O'connor",
+          "Yarralumla",
+          "Jamison Centre",
+          "Waramanga",
+          "Tuggeranong",
+          "Rivett",
+          "Chisholm",
+          "Pearce",
+          "Forrest",
+          "Ainslie",
+          "Macarthur",
+          "Richardson",
+          "Fairbairn Raaf",
+          "Oxley",
+          "Mount Stromlo",
+          "Brindabella",
+          "Crace",
+          "Weetangera",
+          "Aranda",
+          "Gundaroo",
+          "Kippax",
+          "Watson",
+          "Dunlop",
+          "Gilmore",
+          "Amaroo",
+          "Cook",
+          "Franklin",
+          "Florey",
+          "Wallaroo",
+          "Swinger Hill",
+          "Fisher",
+          "Holt",
+          "Scullin",
+          "Hackett",
+          "Forde",
+          "Tinderry",
+          "Duntroon",
+          "Theodore",
+          "Gordon",
+          "Palmerston",
+          "Mitchell",
+          "Mckellar",
+          "Flynn",
+          "Nicholls",
+          "Wanniassa",
+          "Barton",
+          "Chapman",
+          "Yarrow",
+          "Latham",
+          "Braddon",
+          "Charnwood",
+          "Curtin",
+          "Clear Range",
+          "Russell",
+          "Lyons",
+          "Greenway",
+          "Harrison",
+          "Griffith",
+          "Lawson",
+          "Kaleen",
+          "Dickson",
+          "Holder",
+          "Bonner",
+          "Stirling",
+          "Erindale Centre",
+          "Macgregor"
+        ]
+      },
+      "meta": {
+        "profiler_config": {
+          "class_name": "BaseRuleBasedProfiler",
+          "config_version": 1.0,
+          "module_name": "great_expectations.rule_based_profiler.rule_based_profiler",
+          "name": "expect_column_values_to_be_in_set",
+          "rules": [
+            {
+              "domain_builder": {
+                "class_name": "ColumnDomainBuilder",
+                "exclude_column_name_suffixes": null,
+                "exclude_column_names": null,
+                "exclude_semantic_types": null,
+                "include_column_name_suffixes": null,
+                "include_column_names": [
+                  "area"
+                ],
+                "include_semantic_types": null,
+                "module_name": "great_expectations.rule_based_profiler.domain_builder.column_domain_builder",
+                "semantic_type_filter_class_name": null,
+                "semantic_type_filter_module_name": null
+              },
+              "expectation_configuration_builders": [
+                {
+                  "class_name": "DefaultExpectationConfigurationBuilder",
+                  "column": "$domain.domain_kwargs.column",
+                  "condition": null,
+                  "expectation_type": "expect_column_values_to_be_in_set",
+                  "meta": {
+                    "profiler_details": "$parameter.value_set_estimator.details"
+                  },
+                  "module_name": "great_expectations.rule_based_profiler.expectation_configuration_builder.default_expectation_configuration_builder",
+                  "mostly": "$variables.mostly",
+                  "validation_parameter_builder_configs": [
+                    {
+                      "class_name": "ValueSetMultiBatchParameterBuilder",
+                      "evaluation_parameter_builder_configs": null,
+                      "metric_domain_kwargs": "$domain.domain_kwargs",
+                      "metric_value_kwargs": null,
+                      "module_name": "great_expectations.rule_based_profiler.parameter_builder",
+                      "name": "value_set_estimator"
+                    }
+                  ],
+                  "value_set": "$parameter.value_set_estimator.value"
+                }
+              ],
+              "parameter_builders": [],
+              "variables": {
+                "mostly": 1.0
+              }
+            }
+          ],
+          "variables": {}
+        }
+      }
+    }
+  ],
+  "ge_cloud_id": null,
+  "meta": {
+    "great_expectations_version": "0.18.3"
+  }
+}
