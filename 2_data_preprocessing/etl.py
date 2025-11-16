@@ -40,7 +40,27 @@ def etl(path: Path,
         correct_condition_values=['poor', 'tolerable', 'satisfactory', 'good', 'excellent']
     )
 
-    print(df.head())
+    context = gx.get_context(context_root_dir=gx_context_root_dir)
+
+    batch_request = batch_creator(df, context, gx_datasource_name)
+
+    checkpoint_result = create_checkpoint(
+        context=context,
+        batch_request=batch_request,
+        checkpoint_name=gx_checkpoint_name,
+        expectation_suite_name=gx_expectation_suite_name,
+        run_name=gx_run_name
+    )
+
+    feature_engineering_pipeline(
+        df=df,
+        feature_store_path=feature_store_path,
+        feature_file_name=feature_file_name,
+        encoder_file_name=encoder_file_name,
+        target_file_name=target_file_name,
+        fit_encoder=fit_encoder,
+        targets_included=targets_included
+    )
     ### END CODE HERE
 
 def file_reader(path: Path) -> Tuple[pd.DataFrame, pd.DataFrame]:
