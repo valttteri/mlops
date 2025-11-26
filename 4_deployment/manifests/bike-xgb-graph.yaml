@@ -1,0 +1,21 @@
+apiVersion: serving.kserve.io/v1beta1
+kind: InferenceService
+metadata:
+  name: bike-xgb-1
+  namespace: kserve-inference
+spec:
+  predictor:
+    serviceAccountName: kserve-sa
+    ### START CONF HERE
+    ### END CONF HERE
+---
+apiVersion: serving.kserve.io/v1beta1
+kind: InferenceService
+metadata:
+  name: bike-xgb-2
+  namespace: kserve-inference
+spec:
+  predictor:
+    serviceAccountName: kserve-sa
+    ### START CONF HERE
+    ### END CONF HERE

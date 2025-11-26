@@ -1,0 +1,9 @@
+apiVersion: "serving.kserve.io/v1alpha1"
+kind: InferenceGraph 
+metadata: 
+  name: my-graph1
+  namespace: kserve-inference
+spec: 
+  nodes: 
+    ### START CONF HERE
+    ### END CONF HERE

@@ -1,0 +1,16 @@
+apiVersion: "serving.kserve.io/v1beta1"
+kind: "InferenceService"
+metadata:
+  name: "redwine-exp"
+  namespace: kserve-inference
+spec:
+  predictor:
+    minReplicas: 1
+    maxReplicas: 5
+    scaleTarget: 1000
+    scaleMetric: concurrency
+    serviceAccountName: kserve-sa 
+    model:
+      modelFormat: 
+        name: sklearn
+      storageUri: s3://mlflow/49/bb610e857a3342bdbf87cd4dee4843c8/artifacts/wine-quality # change to the S3 URI of your model artifact

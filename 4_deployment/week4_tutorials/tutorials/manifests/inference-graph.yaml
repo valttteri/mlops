@@ -1,0 +1,15 @@
+apiVersion: "serving.kserve.io/v1alpha1"
+kind: InferenceGraph 
+metadata: 
+  name: mygraph
+  namespace: kserve-inference
+spec: 
+  nodes: 
+    root: 
+      routerType: Switch
+      steps: 
+      - serviceName: redwine1
+        condition: "[@this].#(userId==1)"
+
+      - serviceName: redwine2
+        condition: "[@this].#(userId==2)"
