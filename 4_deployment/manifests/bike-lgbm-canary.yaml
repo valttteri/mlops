@@ -7,4 +7,10 @@ spec:
   predictor:
     serviceAccountName: kserve-sa
     ### START CONF HERE
+    canaryTrafficPercent: 30
+    model:
+      modelFormat:
+        name: sklearn
+      protocolVersion: v2
+      storageUri: "s3://mlflow/8/cc4ed208c16b4206ad2f10b33085e7a3/artifacts/lgbm-bike"
     ### END CONF HERE
