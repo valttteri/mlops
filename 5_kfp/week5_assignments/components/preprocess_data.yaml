@@ -1,0 +1,149 @@
+# PIPELINE DEFINITION
+# Name: preprocess-data
+# Description: Args:
+#              data: Input of type Dataset where the dataset is read from
+#              train_x_csv: Output of type Dataset where the training features are saved
+#              train_y_csv: Output of type Dataset where the training target is saved
+#              test_x_csv: Output of type Dataset where the test features are saved
+#              test_y_csv: Output of type Dataset where the test target is saved
+# Inputs:
+#    data: system.Dataset
+# Outputs:
+#    test_x_csv: system.Dataset
+#    test_y_csv: system.Dataset
+#    train_x_csv: system.Dataset
+#    train_y_csv: system.Dataset
+components:
+  comp-preprocess-data:
+    executorLabel: exec-preprocess-data
+    inputDefinitions:
+      artifacts:
+        data:
+          artifactType:
+            schemaTitle: system.Dataset
+            schemaVersion: 0.0.1
+    outputDefinitions:
+      artifacts:
+        test_x_csv:
+          artifactType:
+            schemaTitle: system.Dataset
+            schemaVersion: 0.0.1
+        test_y_csv:
+          artifactType:
+            schemaTitle: system.Dataset
+            schemaVersion: 0.0.1
+        train_x_csv:
+          artifactType:
+            schemaTitle: system.Dataset
+            schemaVersion: 0.0.1
+        train_y_csv:
+          artifactType:
+            schemaTitle: system.Dataset
+            schemaVersion: 0.0.1
+deploymentSpec:
+  executors:
+    exec-preprocess-data:
+      container:
+        args:
+        - --executor_input
+        - '{{$}}'
+        - --function_to_execute
+        - preprocess_data
+        command:
+        - sh
+        - -c
+        - "\nif ! [ -x \"$(command -v pip)\" ]; then\n    python3 -m ensurepip ||\
+          \ python3 -m ensurepip --user || apt-get install python3-pip\nfi\n\nPIP_DISABLE_PIP_VERSION_CHECK=1\
+          \ python3 -m pip install --quiet     --no-warn-script-location 'pandas~=2.2.0'\
+          \ 'kfp==2.0.1' && \"$0\" \"$@\"\n"
+        - sh
+        - -ec
+        - 'program_path=$(mktemp -d)
+
+          printf "%s" "$0" > "$program_path/ephemeral_component.py"
+
+          python3 -m kfp.components.executor_main                         --component_module_path                         "$program_path/ephemeral_component.py"                         "$@"
+
+          '
+        - "\nimport kfp\nfrom kfp import dsl\nfrom kfp.dsl import *\nfrom typing import\
+          \ *\n\ndef preprocess_data(\n    data: Input[Dataset],\n    train_x_csv:\
+          \ Output[Dataset],\n    train_y_csv: Output[Dataset],\n    test_x_csv: Output[Dataset],\n\
+          \    test_y_csv: Output[Dataset],\n):\n    \"\"\"\n    Args:\n        data:\
+          \ Input of type Dataset where the dataset is read from\n        train_x_csv:\
+          \ Output of type Dataset where the training features are saved\n       \
+          \ train_y_csv: Output of type Dataset where the training target is saved\n\
+          \        test_x_csv: Output of type Dataset where the test features are\
+          \ saved\n        test_y_csv: Output of type Dataset where the test target\
+          \ is saved\n    \"\"\"\n    target = \"count\"\n\n    ### START CODE HERE\n\
+          \    # 1.\n    df = pd.read_csv(data.path)\n\n    # 2.\n    df[\"datetime\"\
+          ] = pd.to_datetime(df[\"datetime\"])\n\n    # 3.\n    df[\"hour\"] = df[\"\
+          datetime\"].dt.hour\n    df[\"day\"] = df[\"datetime\"].dt.day\n    df[\"\
+          month\"] = df[\"datetime\"].dt.month\n\n    # 4. \n    df = df.drop(columns=[\"\
+          datetime\", \"casual\", \"registered\"])\n\n    # 5.\n    idx = df.shape[0]-168\n\
+          \n    train_df = df.iloc[:idx]\n    test_df = df.iloc[idx:]\n\n    # 6.\n\
+          \    train_x, train_y = train_df.drop(columns=[\"count\"]), train_df[\"\
+          count\"]\n    test_x, test_y = test_df.drop(columns=[\"count\"]), test_df[\"\
+          count\"]\n\n    train_x.to_csv(train_x_csv.path, index=None)\n    train_y.to_csv(train_y_csv.path,\
+          \ index=None)\n    test_x.to_csv(test_x_csv.path, index=None)\n    test_y.to_csv(test_y_csv.path,\
+          \ index=None)\n    ### END CODE HERE\n\n"
+        image: python:3.11
+pipelineInfo:
+  name: preprocess-data
+root:
+  dag:
+    outputs:
+      artifacts:
+        test_x_csv:
+          artifactSelectors:
+          - outputArtifactKey: test_x_csv
+            producerSubtask: preprocess-data
+        test_y_csv:
+          artifactSelectors:
+          - outputArtifactKey: test_y_csv
+            producerSubtask: preprocess-data
+        train_x_csv:
+          artifactSelectors:
+          - outputArtifactKey: train_x_csv
+            producerSubtask: preprocess-data
+        train_y_csv:
+          artifactSelectors:
+          - outputArtifactKey: train_y_csv
+            producerSubtask: preprocess-data
+    tasks:
+      preprocess-data:
+        cachingOptions:
+          enableCache: true
+        componentRef:
+          name: comp-preprocess-data
+        inputs:
+          artifacts:
+            data:
+              componentInputArtifact: data
+        taskInfo:
+          name: preprocess-data
+  inputDefinitions:
+    artifacts:
+      data:
+        artifactType:
+          schemaTitle: system.Dataset
+          schemaVersion: 0.0.1
+  outputDefinitions:
+    artifacts:
+      test_x_csv:
+        artifactType:
+          schemaTitle: system.Dataset
+          schemaVersion: 0.0.1
+      test_y_csv:
+        artifactType:
+          schemaTitle: system.Dataset
+          schemaVersion: 0.0.1
+      train_x_csv:
+        artifactType:
+          schemaTitle: system.Dataset
+          schemaVersion: 0.0.1
+      train_y_csv:
+        artifactType:
+          schemaTitle: system.Dataset
+          schemaVersion: 0.0.1
+schemaVersion: 2.1.0
+sdkVersion: kfp-2.0.1

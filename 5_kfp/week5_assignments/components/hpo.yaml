@@ -1,0 +1,207 @@
+# PIPELINE DEFINITION
+# Name: hpo
+# Inputs:
+#    hpo_trials: int [Default: 2.0]
+#    random_seed: int [Default: 42.0]
+#    test_x_csv: system.Dataset
+#    test_y_csv: system.Dataset
+#    train_x_csv: system.Dataset
+#    train_y_csv: system.Dataset
+# Outputs:
+#    best_mae: float
+#    hyperparams: dict
+components:
+  comp-hpo:
+    executorLabel: exec-hpo
+    inputDefinitions:
+      artifacts:
+        test_x_csv:
+          artifactType:
+            schemaTitle: system.Dataset
+            schemaVersion: 0.0.1
+          description: Input where the test feature data is saved
+        test_y_csv:
+          artifactType:
+            schemaTitle: system.Dataset
+            schemaVersion: 0.0.1
+          description: Input where the test target data is saved
+        train_x_csv:
+          artifactType:
+            schemaTitle: system.Dataset
+            schemaVersion: 0.0.1
+          description: Input where the training feature data is saved
+        train_y_csv:
+          artifactType:
+            schemaTitle: system.Dataset
+            schemaVersion: 0.0.1
+          description: Input where the training target data is saved
+      parameters:
+        hpo_trials:
+          defaultValue: 2.0
+          description: The number of trials that the Optuna study should run
+          isOptional: true
+          parameterType: NUMBER_INTEGER
+        random_seed:
+          defaultValue: 42.0
+          description: The random seed used for model training and t TPESampler
+          isOptional: true
+          parameterType: NUMBER_INTEGER
+    outputDefinitions:
+      parameters:
+        best_mae:
+          parameterType: NUMBER_DOUBLE
+        hyperparams:
+          parameterType: STRUCT
+deploymentSpec:
+  executors:
+    exec-hpo:
+      container:
+        args:
+        - --executor_input
+        - '{{$}}'
+        - --function_to_execute
+        - hpo
+        command:
+        - sh
+        - -c
+        - "\nif ! [ -x \"$(command -v pip)\" ]; then\n    python3 -m ensurepip ||\
+          \ python3 -m ensurepip --user || apt-get install python3-pip\nfi\n\nPIP_DISABLE_PIP_VERSION_CHECK=1\
+          \ python3 -m pip install --quiet     --no-warn-script-location 'pandas~=2.2.0'\
+          \ 'numpy~=1.26.4' 'lightgbm==3.3.5' 'optuna==3.5.0' 'scikit-learn~=1.4.0'\
+          \ 'kfp==2.0.1' && \"$0\" \"$@\"\n"
+        - sh
+        - -ec
+        - 'program_path=$(mktemp -d)
+
+          printf "%s" "$0" > "$program_path/ephemeral_component.py"
+
+          python3 -m kfp.components.executor_main                         --component_module_path                         "$program_path/ephemeral_component.py"                         "$@"
+
+          '
+        - "\nimport kfp\nfrom kfp import dsl\nfrom kfp.dsl import *\nfrom typing import\
+          \ *\n\ndef hpo(\n    train_x_csv: Input[Dataset],\n    train_y_csv: Input[Dataset],\n\
+          \    test_x_csv: Input[Dataset],\n    test_y_csv: Input[Dataset],\n    hpo_trials:\
+          \ int = 2,\n    random_seed: int = 42\n) -> NamedTuple(\n    \"Output\"\
+          ,\n    [\n        (\"hyperparams\", Dict[str, Any]),\n        (\"best_mae\"\
+          , float),\n    ],\n):\n    \"\"\"\n    Args:\n        train_x_csv: Input\
+          \ where the training feature data is saved\n        train_y_csv: Input where\
+          \ the training target data is saved\n        test_x_csv: Input where the\
+          \ test feature data is saved\n        test_y_csv: Input where the test target\
+          \ data is saved\n        hpo_trials: The number of trials that the Optuna\
+          \ study should run\n        random_seed: The random seed used for model\
+          \ training and t TPESampler\n    Returns:\n        namedtuple(\"Output\"\
+          , [\"hyperparams\", \"best_mae\"]) where hyperparams is the best hyperparameter\
+          \ combination found by the optimization \n        and best_mae is the best\
+          \ MAE found by the optimization. The hyperparams is a dictionary where the\
+          \ keys are the hyperparameter names \n        and values the hyperparameter\
+          \ values. It should also contain the random_state used in model training.\
+          \ \n        The returned namedtuple should be like:\n        Output(hyperparams={'learning_rate':\
+          \ ..., 'colsample_bytree': ..., 'num_leaves': ..., 'random_state': <random_seed>},\
+          \ best_mae=...)  \n    \"\"\"\n    # TODO:\n    # 1. Read the feature and\
+          \ target datasets \n    # 2. Define the objective function\n    # 3. Create\
+          \ an Optuna study and run it. Assign the study to the \"study\" variable,\
+          \ i.e., study=optuna.create_study(...)\n    ### START CODE HERE\n    import\
+          \ optuna\n    import lightgbm as lgb\n    from sklearn.metrics import mean_absolute_error\n\
+          \n    train_x = pd.read_csv(train_x_csv.path)\n    train_y = pd.read_csv(train_y_csv.path)\n\
+          \    test_x = pd.read_csv(test_x_csv.path)\n    test_y = pd.read_csv(test_y_csv.path)\n\
+          \n    # Define objective function \n    def objective_func(trial):\n   \
+          \     params = {\n            \"n_estimators\": 500,\n            \"learning_rate\"\
+          : trial.suggest_float(\"learning_rate\", 0.001, 0.1, log=True),\n      \
+          \      \"colsample_bytree\": trial.suggest_float(\"colsample_bytree\", 0.05,\
+          \ 0.5),\n            \"num_leaves\": trial.suggest_int(\"num_leaves\", 2,\
+          \ 2**10),\n            \"random_state\": random_seed\n        }\n\n    \
+          \    model = lgb.LGBMRegressor(verbose=-1, **params)\n        model.fit(train_x,\
+          \ train_y)\n\n        pred = model.predict(test_x)\n\n        score = mean_absolute_error(test_y,\
+          \ pred)\n        return score\n\n    # Study function    \n    def run_study(study_name:\
+          \ str, objective_func: callable, n_trials: int):\n        study = optuna.create_study(\n\
+          \            direction=\"minimize\",\n            sampler=optuna.samplers.TPESampler(seed=random_seed),\n\
+          \            study_name=study_name\n        )\n\n        study.optimize(objective_func,\
+          \ n_trials=n_trials)\n\n        return study\n\n    # Run study\n    study=\
+          \ (\n        run_study(\n            study_name=\"study1\",\n          \
+          \  objective_func=objective_func,\n            n_trials=hpo_trials,\n  \
+          \      )\n    )\n    ### END CODE HERE\n\n    # Insert the random_state\
+          \ into the hyperparams when prepare the output namedtuple\n    hyperparams\
+          \ = {key: value for key, value in study.best_params.items()}\n    hyperparams[\"\
+          random_state\"] = random_seed\n\n    # TODO: Construct and return the namedtuple\n\
+          \    ### START CODE HERE\n    class Output(NamedTuple):\n        hyperparams:\
+          \ dict\n        best_mae: float\n\n    result = Output(hyperparams, study.best_value)\n\
+          \    return result\n    ### END CODE HERE\n\n"
+        image: python:3.11
+pipelineInfo:
+  name: hpo
+root:
+  dag:
+    outputs:
+      parameters:
+        best_mae:
+          valueFromParameter:
+            outputParameterKey: best_mae
+            producerSubtask: hpo
+        hyperparams:
+          valueFromParameter:
+            outputParameterKey: hyperparams
+            producerSubtask: hpo
+    tasks:
+      hpo:
+        cachingOptions:
+          enableCache: true
+        componentRef:
+          name: comp-hpo
+        inputs:
+          artifacts:
+            test_x_csv:
+              componentInputArtifact: test_x_csv
+            test_y_csv:
+              componentInputArtifact: test_y_csv
+            train_x_csv:
+              componentInputArtifact: train_x_csv
+            train_y_csv:
+              componentInputArtifact: train_y_csv
+          parameters:
+            hpo_trials:
+              componentInputParameter: hpo_trials
+            random_seed:
+              componentInputParameter: random_seed
+        taskInfo:
+          name: hpo
+  inputDefinitions:
+    artifacts:
+      test_x_csv:
+        artifactType:
+          schemaTitle: system.Dataset
+          schemaVersion: 0.0.1
+        description: Input where the test feature data is saved
+      test_y_csv:
+        artifactType:
+          schemaTitle: system.Dataset
+          schemaVersion: 0.0.1
+        description: Input where the test target data is saved
+      train_x_csv:
+        artifactType:
+          schemaTitle: system.Dataset
+          schemaVersion: 0.0.1
+        description: Input where the training feature data is saved
+      train_y_csv:
+        artifactType:
+          schemaTitle: system.Dataset
+          schemaVersion: 0.0.1
+        description: Input where the training target data is saved
+    parameters:
+      hpo_trials:
+        defaultValue: 2.0
+        description: The number of trials that the Optuna study should run
+        isOptional: true
+        parameterType: NUMBER_INTEGER
+      random_seed:
+        defaultValue: 42.0
+        description: The random seed used for model training and t TPESampler
+        isOptional: true
+        parameterType: NUMBER_INTEGER
+  outputDefinitions:
+    parameters:
+      best_mae:
+        parameterType: NUMBER_DOUBLE
+      hyperparams:
+        parameterType: STRUCT
+schemaVersion: 2.1.0
+sdkVersion: kfp-2.0.1
