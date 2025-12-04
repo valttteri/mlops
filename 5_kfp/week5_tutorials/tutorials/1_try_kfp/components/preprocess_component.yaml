@@ -1,0 +1,112 @@
+# PIPELINE DEFINITION
+# Name: preprocess
+# Inputs:
+#    data: system.Dataset
+# Outputs:
+#    test_set: system.Dataset
+#    train_set: system.Dataset
+components:
+  comp-preprocess:
+    executorLabel: exec-preprocess
+    inputDefinitions:
+      artifacts:
+        data:
+          artifactType:
+            schemaTitle: system.Dataset
+            schemaVersion: 0.0.1
+          description: Input of type Dataset which the dataset is read from
+    outputDefinitions:
+      artifacts:
+        test_set:
+          artifactType:
+            schemaTitle: system.Dataset
+            schemaVersion: 0.0.1
+        train_set:
+          artifactType:
+            schemaTitle: system.Dataset
+            schemaVersion: 0.0.1
+deploymentSpec:
+  executors:
+    exec-preprocess:
+      container:
+        args:
+        - --executor_input
+        - '{{$}}'
+        - --function_to_execute
+        - preprocess
+        command:
+        - sh
+        - -c
+        - "\nif ! [ -x \"$(command -v pip)\" ]; then\n    python3 -m ensurepip ||\
+          \ python3 -m ensurepip --user || apt-get install python3-pip\nfi\n\nPIP_DISABLE_PIP_VERSION_CHECK=1\
+          \ python3 -m pip install --quiet     --no-warn-script-location 'pandas~=2.2.0'\
+          \ 'scikit-learn~=1.4.0' 'kfp==2.0.1' && \"$0\" \"$@\"\n"
+        - sh
+        - -ec
+        - 'program_path=$(mktemp -d)
+
+          printf "%s" "$0" > "$program_path/ephemeral_component.py"
+
+          python3 -m kfp.components.executor_main                         --component_module_path                         "$program_path/ephemeral_component.py"                         "$@"
+
+          '
+        - "\nimport kfp\nfrom kfp import dsl\nfrom kfp.dsl import *\nfrom typing import\
+          \ *\n\ndef preprocess(\n    data: Input[Dataset],\n    train_set: Output[Dataset],\n\
+          \    test_set: Output[Dataset],\n):\n    \"\"\"\n    Read a dataset from\
+          \ a file, split it into a training and test dataset, and save the training\
+          \ and test dataset\n    into separate files\n    Args:\n        data: Input\
+          \ of type Dataset which the dataset is read from\n        train_set: Output\
+          \ of type Dataset where the training dataset is saved\n        test_set:\
+          \ Output of type Dataset where the test dataset is saved  \n    \"\"\"\n\
+          \    import pandas as pd\n    from sklearn.model_selection import train_test_split\n\
+          \n    data = pd.read_csv(data.path)\n\n    # Split the data into training\
+          \ and test sets. (0.75, 0.25) split\n    train, test = train_test_split(data,\
+          \ random_state=42)\n\n    # Save the training and test datasets into separate\
+          \ files\n    train.to_csv(train_set.path, index=None)\n    test.to_csv(test_set.path,\
+          \ index=None)\n\n"
+        image: python:3.11
+pipelineInfo:
+  name: preprocess
+root:
+  dag:
+    outputs:
+      artifacts:
+        test_set:
+          artifactSelectors:
+          - outputArtifactKey: test_set
+            producerSubtask: preprocess
+        train_set:
+          artifactSelectors:
+          - outputArtifactKey: train_set
+            producerSubtask: preprocess
+    tasks:
+      preprocess:
+        cachingOptions:
+          enableCache: true
+        componentRef:
+          name: comp-preprocess
+        inputs:
+          artifacts:
+            data:
+              componentInputArtifact: data
+        taskInfo:
+          name: preprocess
+  inputDefinitions:
+    artifacts:
+      data:
+        artifactType:
+          schemaTitle: system.Dataset
+          schemaVersion: 0.0.1
+        description: Input of type Dataset which the dataset is read from
+  outputDefinitions:
+    artifacts:
+      test_set:
+        artifactType:
+          schemaTitle: system.Dataset
+          schemaVersion: 0.0.1
+      train_set:
+        artifactType:
+          schemaTitle: system.Dataset
+          schemaVersion: 0.0.1
+schemaVersion: 2.1.0
+sdkVersion: kfp-2.0.1
