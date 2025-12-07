@@ -49,8 +49,8 @@ deploymentSpec:
           \ *\n\ndef pull_data(url: str, data: Output[Dataset]):\n    \"\"\"\n   \
           \ Args:\n        url: Dataset URL\n        data: Output of type Dataset\
           \ where the downloaded dataset is saved\n    \"\"\"\n    ### START CODE\
-          \ HERE\n    df = pd.read_csv(url, sep=\",\")\n    df.to_csv(data.path, index=None)\n\
-          \    ### END CODE HERE\n\n"
+          \ HERE\n    import pandas as pd\n    df = pd.read_csv(url, sep=\",\")\n\
+          \    df.to_csv(data.path, index=None)\n    ### END CODE HERE\n\n"
         image: python:3.11
 pipelineInfo:
   name: pull-data

@@ -75,17 +75,18 @@ deploymentSpec:
           \        test_x_csv: Output of type Dataset where the test features are\
           \ saved\n        test_y_csv: Output of type Dataset where the test target\
           \ is saved\n    \"\"\"\n    target = \"count\"\n\n    ### START CODE HERE\n\
-          \    # 1.\n    df = pd.read_csv(data.path)\n\n    # 2.\n    df[\"datetime\"\
-          ] = pd.to_datetime(df[\"datetime\"])\n\n    # 3.\n    df[\"hour\"] = df[\"\
-          datetime\"].dt.hour\n    df[\"day\"] = df[\"datetime\"].dt.day\n    df[\"\
-          month\"] = df[\"datetime\"].dt.month\n\n    # 4. \n    df = df.drop(columns=[\"\
-          datetime\", \"casual\", \"registered\"])\n\n    # 5.\n    idx = df.shape[0]-168\n\
-          \n    train_df = df.iloc[:idx]\n    test_df = df.iloc[idx:]\n\n    # 6.\n\
-          \    train_x, train_y = train_df.drop(columns=[\"count\"]), train_df[\"\
-          count\"]\n    test_x, test_y = test_df.drop(columns=[\"count\"]), test_df[\"\
-          count\"]\n\n    train_x.to_csv(train_x_csv.path, index=None)\n    train_y.to_csv(train_y_csv.path,\
-          \ index=None)\n    test_x.to_csv(test_x_csv.path, index=None)\n    test_y.to_csv(test_y_csv.path,\
-          \ index=None)\n    ### END CODE HERE\n\n"
+          \    import pandas as pd\n    # 1.\n    df = pd.read_csv(data.path)\n\n\
+          \    # 2.\n    df[\"datetime\"] = pd.to_datetime(df[\"datetime\"])\n\n \
+          \   # 3.\n    df[\"hour\"] = df[\"datetime\"].dt.hour\n    df[\"day\"] =\
+          \ df[\"datetime\"].dt.day\n    df[\"month\"] = df[\"datetime\"].dt.month\n\
+          \n    # 4. \n    df = df.drop(columns=[\"datetime\", \"casual\", \"registered\"\
+          ])\n\n    # 5.\n    idx = df.shape[0]-168\n\n    train_df = df.iloc[:idx]\n\
+          \    test_df = df.iloc[idx:]\n\n    # 6.\n    train_x, train_y = train_df.drop(columns=[\"\
+          count\"]), train_df[\"count\"]\n    test_x, test_y = test_df.drop(columns=[\"\
+          count\"]), test_df[\"count\"]\n\n    train_x.to_csv(train_x_csv.path, index=None)\n\
+          \    train_y.to_csv(train_y_csv.path, index=None)\n    test_x.to_csv(test_x_csv.path,\
+          \ index=None)\n    test_y.to_csv(test_y_csv.path, index=None)\n    ### END\
+          \ CODE HERE\n\n"
         image: python:3.11
 pipelineInfo:
   name: preprocess-data
