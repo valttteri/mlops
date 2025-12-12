@@ -311,17 +311,16 @@ deploymentSpec:
           \    import pandas as pd\n    import numpy as np\n\n    train_x = pd.read_csv(train_x_csv.path)\n\
           \    train_y = pd.read_csv(train_y_csv.path)\n    test_x = pd.read_csv(test_x_csv.path)\n\
           \    test_y = pd.read_csv(test_y_csv.path)\n\n    # Define objective function\
-          \ \n    def objective_func(trial):\n        params = {\n            \"n_estimators\"\
-          : 500,\n            \"learning_rate\": trial.suggest_float(\"learning_rate\"\
-          , 0.001, 0.1, log=True),\n            \"colsample_bytree\": trial.suggest_float(\"\
-          colsample_bytree\", 0.05, 0.5),\n            \"num_leaves\": trial.suggest_int(\"\
-          num_leaves\", 2, 2**10),\n            \"random_state\": random_seed\n  \
-          \      }\n\n        model = lgb.LGBMRegressor(verbose=-1, **params)\n  \
-          \      model.fit(train_x, train_y)\n\n        pred = model.predict(test_x)\n\
-          \n        score = mean_absolute_error(test_y, pred)\n        return score\n\
-          \n    # Study function    \n    def run_study(study_name: str, objective_func:\
-          \ callable, n_trials: int):\n        study = optuna.create_study(\n    \
-          \        direction=\"minimize\",\n            sampler=optuna.samplers.TPESampler(seed=random_seed),\n\
+          \ \n    def objective_func(trial):\n        params = {\n            \"learning_rate\"\
+          : trial.suggest_float(\"learning_rate\", 0.001, 0.1, log=True),\n      \
+          \      \"colsample_bytree\": trial.suggest_float(\"colsample_bytree\", 0.5,\
+          \ 1.0),\n            \"num_leaves\": trial.suggest_int(\"num_leaves\", 2,\
+          \ 2**10),\n            \"random_state\": random_seed\n        }\n\n    \
+          \    model = lgb.LGBMRegressor(verbose=-1, **params)\n        model.fit(train_x,\
+          \ train_y)\n\n        pred = model.predict(test_x)\n\n        score = mean_absolute_error(test_y,\
+          \ pred)\n        return score\n\n    # Study function    \n    def run_study(study_name:\
+          \ str, objective_func: callable, n_trials: int):\n        study = optuna.create_study(\n\
+          \            direction=\"minimize\",\n            sampler=optuna.samplers.TPESampler(seed=random_seed),\n\
           \            study_name=study_name\n        )\n\n        study.optimize(objective_func,\
           \ n_trials=n_trials)\n\n        return study\n\n    # Run study\n    study=\
           \ (\n        run_study(\n            study_name=\"study1\",\n          \
